@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang='ru'>
+  <head>
+    <title>Frequency Dictionary</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='shortcut icon' type='image/png' href='images/siteIcon.png'/>
+
+    <style>
+      @font-face{
+        font-family: comfortaa;
+        src: url('Fonts/Comfortaa-Regular.ttf');
+        font-weight: normal;
+      }
+      @font-face{
+        font-family: comfortaa;
+        src: url('Fonts/Comfortaa-Bold.ttf');
+        font-weight: bold;
+      }
+      @font-face{
+        font-family: geometria;
+        src: url('Fonts/Geometria.woff');
+        font-weight: normal;
+      }
+      @font-face{
+        font-family: geometria;
+        src: url('Fonts/GeometriaMedium.woff');
+        font-weight: bold;
+      }
+      :root{
+        --horizontalPadding: 10vmax;
+        --topPadding: 0;
+        --bottomPadding: 3vmax;
+        --colorText: rgb(60, 60, 60);
+        --colorBackground: rgb(255, 255, 255);
+      }
+      *{
+        box-sizing: border-box;
+      }
+      *::selection{
+        color: var(--colorBackground);
+        background: var(--colorText);
+      }
+      body{
+        margin: 0;
+      }
+      a{
+        text-decoration: none;
+      }
+      a:hover{
+        text-decoration: underline;
+      }
+      .__invisible{
+        display: none;
+      }
+      .__horizontalMargin_15{
+        margin: 0 1.5vmax;
+      }
+      .__verticalMargin_1{
+        margin: 1vmax 0;
+      }
+      .__verticalMargin_2{
+        margin: 2vmax 0;
+      }
+      .__horizontalFlexContainer{
+        display: flex;
+        align-items: center;
+      }
+      .__colorDisabled{
+        color: rgb(150, 150, 150);
+      }
+      #wrapper{
+        padding: var(--topPadding) var(--horizontalPadding) var(--bottomPadding)  var(--horizontalPadding);
+        color: var(--colorText);
+        background-color: var(--colorBackground);
+      }
+      #header{
+        display: flex;
+        height: 4em;
+        justify-content: center;
+        align-items: center;
+        font: 3vmax comfortaa;
+        letter-spacing: 0.05em;
+      }
+      #header > span{
+        margin: 0 2em;
+      }
+      .headerLine{
+        width: 2em;
+        height: 2px;
+        background-color: var(--colorText);
+      }
+      .sectionLine{
+        height: 0.9px;
+        background-color: rgb(200, 200, 200);
+      }
+      .contentText{
+        font-size: 1.25vmax;
+        font-family: Geometria;
+      }
+      .contentButton{
+        display: inline-flex;
+        position: relative;
+        padding: 0.5em 1em;
+        align-items: center;
+        font-size: 1.25vmax;
+        font-family: Geometria;
+        font-weight: bold;
+        border: solid 1px;
+        cursor: pointer;
+        transition: 0.1s;
+      }
+      .contentButton:hover{
+        border: solid 1px var(--colorText);
+        color: var(--colorBackground);
+        background-color: var(--colorText);
+      }
+      .contentInput{
+        width: 15em;
+        align-self: stretch;
+        padding: 0 0.5em;
+        color: inherit;
+        border: solid 1px;
+        font-size: 1.25vmax;
+        font-family: Geometria;
+        font-weight: bold;
+      }
+      .contentInput::placeholder{
+        font-weight: normal;
+        color: rgb(150, 150, 150);
+      }
+      .contentInput:focus{
+        color: var(--colorBackground);
+        background-color: var(--colorText);
+      }
+      .tableClass{
+        border: black;
+        background: transparent;
+        border: solid 1px;
+      }
+      .row{
+        display: flex;
+        align-content: space-between;
+        justify-content: space-between;
+      }
+      .row div{
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        border: solid 1px;
+        display: inline-flex;
+        position: relative;
+        padding: 0.5em 1em;
+        font-size: 1.0vmax;
+        font-family: Geometria;
+        font-weight: bold;
+      }
+      .dictionaryButton{
+        padding: 0.5em 1em;
+        cursor: pointer;
+        transition: 0.1s;
+      }
+      .dictionaryButton:hover{
+        border: solid 1px var(--colorText);
+        color: var(--colorBackground);
+        background-color: var(--colorText);
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id='wrapper'>
+      <div id='header'>
+        <div class='headerLine'> </div>
+        <span> Frequency Dictionary </span>
+        <div class='headerLine'> </div>
+      </div>
+      <div class='__horizontalFlexContainer'>
+        <label class='contentButton'>
+          <input id='loadFileButton' class='__invisible' type = 'file'>
+          ЗАГРУЗИТЬ ФАЙЛ
+        </label>
+        <div id='loadFileName' class='contentText __horizontalMargin_15 __singleString __colorDisabled'>
+          Файл не выбран
+        </div>
+      </div>
+      <div class='sectionLine __verticalMargin_2'> </div>
+      <div class='__horizontalFlexContainer'>
+        <div id='showAllFilesButton'  class='contentButton'>
+          Вывести список всех файлов
+        </div>
+        <div id='showAllWordsButton' class='contentButton __horizontalMargin_15'>
+          Вывести список всех слов
+        </div>
+      </div>
+      <div class='sectionLine __verticalMargin_2'> </div>
+      <div class='__horizontalFlexContainer'>
+        <input id='dataInput' class='contentInput' type='text' placeholder='Введите слово'>
+        <div id='findButton' class='contentButton __horizontalMargin_15'>
+          Вывести список файлов, в которых есть данное слово
+        </div>
+      </div>
+      <div class='sectionLine __verticalMargin_2'> </div>
+      <div id='tableDescription' class='contentText  __verticalMargin_2'>
+      </div>
+      <div id='table' class='tableClass'>
+
+      </div>
+    </div>
+
+    <script>
+      const _loadFileButton = document.querySelector('#loadFileButton');
+      const _loadFileName = document.querySelector('#loadFileName');
+      const _showAllFilesButton = document.querySelector('#showAllFilesButton');
+      const _showAllWordsButton = document.querySelector('#showAllWordsButton');
+      const _dataInput = document.querySelector('#dataInput');
+      const _findButton = document.querySelector('#findButton');
+      const _tableDescription = document.querySelector('#tableDescription');
+      const _table = document.querySelector('#table');
+
+      function clearTable() {
+        while (_table.firstChild){
+          _table.removeChild(_table.firstChild);
+        }
+      }
+
+      function uploadFile(file) {
+        var formData = new FormData();
+        formData.append('command', 'upload');
+        formData.append('filename', file.name);
+        formData.append('file', file);
+        var url = 'http://localhost:8090/FrequencyDictionaryServlet/servlet';
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
+          if(this.readyState == 4 && this.status == 200){
+            _loadFileName.innerText += ": " + this.responseText;
+          }
+        };
+        xhttp.open('POST', url, true);
+        xhttp.send(formData);
+      }
+
+      function buildTableForAllFiles(tableJSON){
+        clearTable();
+        var newRow = document.createElement("div");
+        newRow.classList.add("row");
+        newRow.style.backgroundColor = "rgb(220, 220, 220)";
+        newRow.innerHTML = "<div>Файл</div>" +
+                "          <div>Количество слов</div>" +
+                "          <div>Количество уникальных слов</div>" +
+                "          <div>Перейти к частотному словарю</div>";
+        var childrenArray = newRow.querySelectorAll('div');
+        childrenArray.forEach( (child) => { child.style.width = "25.0%"; } );
+        _table.appendChild(newRow);
+
+        _tableDescription.innerText = "";
+        var tableList = JSON.parse(tableJSON);
+        tableList.forEach( (el) =>{
+          let newRow = document.createElement("div");
+          _table.appendChild(newRow);
+          newRow.classList.add("row");
+          newRow.innerHTML = "<div>" + el["filename"] + "</div>" +
+                  "          <div>" + el["wordsNumber"] + "</div>" +
+                  "          <div>" + el["uniqueWordsNumber"] + "</div>" +
+                  "          <div class='dictionaryButton' onclick='getDictionary(\"" + el["filename"] + "\")'>Частотный словарь</div>";
+          let childrenArray = newRow.querySelectorAll('div');
+          childrenArray.forEach( (child) => { child.style.width = "25.0%"; } );
+          _table.appendChild(newRow);
+        });
+      }
+      function getNamesOfAllFiles() {
+        _tableDescription.innerText = "Подожите...";
+
+        var formData = new FormData();
+        formData.append('command', 'namesOfAllFiles');
+        var url = 'http://localhost:8090/FrequencyDictionaryServlet/servlet';
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
+          if(this.readyState == 4 && this.status == 200){
+            buildTableForAllFiles(this.responseText);
+          }
+        };
+        xhttp.open('POST', url, true);
+        xhttp.send(formData);
+      }
+
+      function buildTableForAllWords(tableJSON) {
+        clearTable();
+        var newRow = document.createElement("div");
+        newRow.classList.add("row");
+        newRow.style.backgroundColor = "rgb(220, 220, 220)";
+        newRow.innerHTML = "<div style='width: 100.0%'>Все слова</div>";
+        _table.appendChild(newRow);
+
+        _tableDescription.innerText = "";
+        var tableList = JSON.parse(tableJSON);
+        tableList.forEach( (el) =>{
+          let newRow = document.createElement("div");
+          _table.appendChild(newRow);
+          newRow.classList.add("row");
+          newRow.innerHTML = "<div style='width: 100.0%'>" + el + "</div>";
+          _table.appendChild(newRow);
+        });
+      }
+      function getAllWords() {
+        _tableDescription.innerText = "Подожите...";
+
+        var formData = new FormData();
+        formData.append('command', 'allWords');
+        var url = 'http://localhost:8090/FrequencyDictionaryServlet/servlet';
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
+          if(this.readyState == 4 && this.status == 200){
+            buildTableForAllWords(this.responseText);
+          }
+        };
+        xhttp.open('POST', url, true);
+        xhttp.send(formData);
+      }
+
+      function buildTableForFilesWhereWordExist(tableJSON) {
+        clearTable();
+        var newRow = document.createElement("div");
+        newRow.classList.add("row");
+        newRow.style.backgroundColor = "rgb(220, 220, 220)";
+        newRow.innerHTML = "<div>Файл</div>" +
+                "          <div>Количество данных слов</div>" +
+                "          <div>Общее количество слов</div>" +
+                "          <div>Процент от общего количества слов</div>" +
+                "          <div>Частотный словарь</div>";
+        var childrenArray = newRow.querySelectorAll('div');
+        childrenArray.forEach( (child) => { child.style.width = "20.0%"; } );
+        _table.appendChild(newRow);
+
+        _tableDescription.innerText = "";
+        var tableList = JSON.parse(tableJSON);
+        tableList.forEach( (el) =>{
+          let newRow = document.createElement("div");
+          _table.appendChild(newRow);
+          newRow.classList.add("row");
+          newRow.innerHTML = "<div>" + el["filename"] + "</div>" +
+                  "          <div>" + el["thisWordCount"] + "</div>" +
+                  "          <div>" + el["wordsNumber"] + "</div>" +
+                  "          <div>" + el["thisWordPercent"] + "</div>" +
+                  "          <div class='dictionaryButton' onclick='getDictionary(\"" + el["filename"] + "\")'>Частотный словарь</div>";
+          let childrenArray = newRow.querySelectorAll('div');
+          childrenArray.forEach( (child) => { child.style.width = "20.0%"; } );
+          _table.appendChild(newRow);
+        });
+      }
+      function getFilesWhereWordExist(word) {
+        _tableDescription.innerText = "Подожите...";
+
+        var formData = new FormData();
+        formData.append('command', 'namesOfFilesWhereWordExist');
+        formData.append('word', word);
+        var url = 'http://localhost:8090/FrequencyDictionaryServlet/servlet';
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
+          if(this.readyState == 4 && this.status == 200){
+            buildTableForFilesWhereWordExist(this.responseText);
+          }
+        };
+        xhttp.open('POST', url, true);
+        xhttp.send(formData);
+      }
+
+      function buildTableForDictionary(tableJSON) {
+        clearTable();
+        _tableDescription.innerText = "";
+        var dictionary = JSON.parse(tableJSON);
+
+        var newRow = document.createElement("div");
+        newRow.classList.add("row");
+        newRow.innerHTML = "<div style='background-color: rgb(220, 220, 220)'>Имя файла</div>" +
+                "          <div>" + dictionary["fileName"] + "</div>";
+        var childrenArray = newRow.querySelectorAll('div');
+        childrenArray.forEach( (child) => { child.style.width = "50.0%"; } );
+        _table.appendChild(newRow);
+
+        newRow = document.createElement("div");
+        newRow.classList.add("row");
+        newRow.innerHTML = "<div style='background-color: rgb(220, 220, 220)'>Слов в файле</div>" +
+                "          <div>" + dictionary["wordsNumber"] + "</div>";
+        childrenArray = newRow.querySelectorAll('div');
+        childrenArray.forEach( (child) => { child.style.width = "50.0%"; } );
+        _table.appendChild(newRow);
+
+        newRow = document.createElement("div");
+        newRow.classList.add("row");
+        newRow.innerHTML = "<div style='background-color: rgb(220, 220, 220)'>Уникальных слов в файле</div>" +
+                "          <div>" + dictionary["uniqueWordsNumber"] + "</div>";
+        childrenArray = newRow.querySelectorAll('div');
+        childrenArray.forEach( (child) => { child.style.width = "50.0%"; } );
+        _table.appendChild(newRow);
+
+        newRow = document.createElement("div");
+        newRow.classList.add("row");
+        newRow.style.backgroundColor = "rgb(220, 220, 220)";
+        newRow.innerHTML = "<div>Слово</div>" +
+                "          <div>Количество</div>" +
+                "          <div>Процент</div>";
+        childrenArray = newRow.querySelectorAll('div');
+        childrenArray.forEach( (child) => { child.style.width = "33.3333%"; } );
+        _table.appendChild(newRow);
+
+        dictionary["dictionary"].forEach( (el) =>{
+          let newRow = document.createElement("div");
+          _table.appendChild(newRow);
+          newRow.classList.add("row");
+          newRow.innerHTML = "<div>" + el["word"] + "</div>" +
+                  "          <div>" + el["count"] + "</div>" +
+                  "          <div>" + el["percent"] + "</div>";
+          let childrenArray = newRow.querySelectorAll('div');
+          childrenArray.forEach( (child) => { child.style.width = "33.3333%"; } );
+          _table.appendChild(newRow);
+        });
+      }
+      function getDictionary(filename) {
+        _tableDescription.innerText = "Подожите...";
+
+        var formData = new FormData();
+        formData.append('command', 'dictionary');
+        formData.append('filename', filename);
+        var url = 'http://localhost:8090/FrequencyDictionaryServlet/servlet';
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
+          if(this.readyState == 4 && this.status == 200){
+            buildTableForDictionary(this.responseText);
+          }
+        };
+        xhttp.open('POST', url, true);
+        xhttp.send(formData);
+      }
+
+      window.onload = () => {
+        _loadFileButton.addEventListener('change', event => {
+          // обработчик нажатия кнопки "Загрузить файл"
+          _loadFileName.innerText = _loadFileButton.files.item(0).name;
+          uploadFile(_loadFileButton.files.item(0));
+        });
+        _showAllFilesButton.addEventListener('click', getNamesOfAllFiles);
+        _showAllWordsButton.addEventListener('click', getAllWords);
+        _findButton.addEventListener('click', event => {
+          // обработчик нажатия кнопки "Вывести список файлов, в которых есть данное слово"
+          getFilesWhereWordExist(_dataInput.value);
+        });
+      };
+    </script>
+  </body>
+</html>
